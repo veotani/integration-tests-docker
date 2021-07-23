@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  integration_tests:
+    build: 
+      context: .
+      dockerfile: Dockerfile-integration-tests  
+    depends_on: 
+      - postgresql  
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile-main
+    depends_on:
+      - postgresql
+
+  postgresql:
+    image: postgres
+    ports:
+      - 5432:5432  
+    environment:
+      POSTGRES_PASSWORD: example  
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+        
